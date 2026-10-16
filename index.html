@@ -35,12 +35,15 @@ button{font-family:inherit;cursor:pointer}
 #best{color:#80ffdb;font-weight:800;min-height:24px}
 .row{display:flex;gap:8px}.sm{padding:8px 14px!important;font-size:18px!important;width:auto!important}
 #vol{width:200px;accent-color:#ffc23c}
+#shopq{position:fixed;top:8px;left:50%;margin-left:5px;width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
+#autob{position:fixed;left:16px;bottom:70px;width:70px;height:70px;border-radius:50%;border:3px solid #80ffdb;background:#80ffdb33;color:#fff;font-size:28px;display:none}
+@media(pointer:coarse){#autob.show{display:block}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;width:min(430px,92vw)}
 .lv{background:var(--panel);border:2px solid var(--gold);border-radius:14px;padding:10px 4px;color:#fff;font-weight:800;font-size:24px}
 .lv small{display:block;font-size:12px;font-weight:600;margin-top:2px}
 .lv:disabled{opacity:.45;border-color:#556!important}
 #how{display:none;max-width:380px;font-size:15px;line-height:1.8;background:#1a2150;border-radius:14px;padding:10px 14px}
-#pause{position:fixed;top:8px;left:50%;transform:translateX(-50%);width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
+#pause{position:fixed;top:8px;left:50%;margin-left:-26px;transform:translateX(-50%);width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
 </style>
 </head>
 <body>
@@ -52,17 +55,20 @@ button{font-family:inherit;cursor:pointer}
 <div id="guns"></div>
 <button id="dash">اندفاع</button>
 <button id="pause">⏸</button>
+<button id="shopq">🛒</button>
+<button id="autob">🎯</button>
 
 <div class="ov" id="menu">
   <h1 class="logo">كرات<br>ومسدسات</h1>
   <div id="best"></div>
   <button class="big" id="cont" style="display:none">كمّل اللعب</button>
   <button class="big" id="play">ابدأ اللعب</button>
+  <button class="big alt" id="shopb">🛒 المتجر</button>
   <button class="big alt" id="howb">كيف تلعب؟</button>
   <div class="row"><button class="big alt sm" id="snd">🔊</button><button class="big alt sm" id="mus">🎵</button><button class="big alt sm" id="vibb">📳</button></div>
   <input type="range" id="vol" min="0" max="100" value="80">
   <button class="big alt" id="quit" style="display:none">إنهاء اللعبة</button>
-  <div id="how"><b>الكمبيوتر:</b> WASD للحركة، الماوس للتصويب والإطلاق، Shift للاندفاع، 1-4 للأسلحة، P للإيقاف.<br><b>الموبايل:</b> اسحب بإصبعك للحركة، التصويب والإطلاق تلقائي، وزر «اندفاع» للهرب.<br>كل مرحلة 5 جولات وآخرها زعيم. اجمع العناصر الساقطة (❤️ علاج، 🛡️ درع، ⚡ إطلاق سريع)، واشتر أسلحة وتطويرات من المتجر بين المراحل.</div>
+  <div id="how"><b>الكمبيوتر:</b> WASD للحركة، الماوس للتصويب والإطلاق، Shift للاندفاع، 1-4 للأسلحة، P للإيقاف.<br><b>الموبايل:</b> اسحب بالنصف الأيسر للحركة وبالنصف الأيمن للتصويب والإطلاق، وزر «اندفاع» للهرب. اشترِ «التصويب التلقائي» من المتجر لتصوّب وتطلق اللعبة عنك.<br>كل مرحلة 5 جولات وآخرها زعيم. اجمع العناصر الساقطة (❤️ علاج، 🛡️ درع، ⚡ إطلاق سريع)، واشتر أسلحة وتطويرات من المتجر بين المراحل.</div>
 </div>
 <div class="ov" id="lvls"></div>
 <div class="ov" id="shop"></div>
@@ -102,7 +108,7 @@ const UPG=[
 
 let P,enemies,bullets,parts,texts,ghosts,lvl=0,kills=0,coins=0,cur=0,st="play",spawnT=0,banner=0,shake=0,last=0;
 let owned=[true,false,false,false],up={dmg:0,spd:0,hp:0};
-const keys={},mouse={x:0,y:0,down:false};let joy=null,isTouch=false;
+const keys={},mouse={x:0,y:0,down:false};let joy=null,aim=null,isTouch=false,autoOwned=false,autoOn=true,shopMode="level",hudShop=false;
 const rnd=(a,b)=>a+Math.random()*(b-a);
 
 function buildGuns(){
@@ -161,7 +167,7 @@ function showMenu(paused){
  $("menu").style.display="flex";
 }
 function togglePause(){if(st==="play")showMenu(true);else if(st==="pause")$("play").click()}
-function saveGame(){try{localStorage.setItem("balls_save",JSON.stringify({lvl:lvl+1,coins,owned,up,cur}))}catch(e){}}
+function saveGame(){try{localStorage.setItem("balls_save",JSON.stringify({lvl:lvl+1,coins,owned,up,cur,auto:autoOwned,autoOn}))}catch(e){}}
 function getSave(){try{return JSON.parse(localStorage.getItem("balls_save"))}catch(e){return null}}
 function clearSave(){try{localStorage.removeItem("balls_save")}catch(e){}}
 function getUnl(){try{return Math.min(LEVELS.length,Math.max(1,Number(localStorage.getItem("balls_unl")||1)))}catch(e){return 1}}
@@ -173,7 +179,7 @@ function openLevels(){
  LEVELS.forEach((L,i)=>{
   const b=document.createElement("button");b.className="lv";b.disabled=i>=u;b.style.borderColor="hsl("+L.hue+",70%,55%)";
   b.innerHTML=(i>=u?"🔒":(i+1))+"<small>"+(i>=u?"مقفولة":(i<u-1?"✅ ":"")+L.boss.name)+"</small>";
-  b.onclick=()=>{audio();sfx("click");const v=getSave();if(v){coins=v.coins;owned=v.owned;up=v.up;cur=v.cur}else fullReset();lvl=i;startLevel()};
+  b.onclick=()=>{audio();sfx("click");const v=getSave();if(v)loadSave(v);else fullReset();lvl=i;startLevel()};
   g.appendChild(b);
  });
  el.appendChild(g);
@@ -182,7 +188,7 @@ function openLevels(){
  rs.onclick=()=>{if(confirm("تصفير كل المراحل والعملات والأسلحة؟")){try{localStorage.removeItem("balls_unl")}catch(e){}clearSave();fullReset();openLevels()}};el.appendChild(rs);
  el.style.display="flex";
 }
-function fullReset(){lvl=0;coins=0;cur=0;owned=[true,false,false,false];up={dmg:0,spd:0,hp:0}}
+function fullReset(){autoOwned=false;autoOn=true;syncAuto();lvl=0;coins=0;cur=0;owned=[true,false,false,false];up={dmg:0,spd:0,hp:0}}
 $("play").onclick=()=>{audio();fs();sfx("click");if(st==="pause"){st="play";$("menu").style.display="none"}else openLevels()};
 $("quit").onclick=()=>{sfx("click");fullReset();startLevel();showMenu(false)};
 $("howb").onclick=()=>{sfx("click");const h=$("how");h.style.display=h.style.display==="block"?"none":"block"};
@@ -190,6 +196,11 @@ $("snd").onclick=()=>{muted=!muted;audio();$("snd").textContent=muted?"🔇":"�
 $("pause").onclick=()=>{audio();togglePause()};
 function vib(n){if(vibOn&&navigator.vibrate)try{navigator.vibrate(n)}catch(e){}}
 function fs(){if(matchMedia("(pointer:coarse)").matches&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{})}
+function syncAuto(){const b=$("autob");b.classList.toggle("show",autoOwned);b.style.opacity=autoOn?1:.5}
+function loadSave(v){coins=v.coins;owned=v.owned;up=v.up;cur=v.cur;autoOwned=!!v.auto;autoOn=v.autoOn!==false;syncAuto()}
+$("autob").onclick=()=>{autoOn=!autoOn;joy=null;aim=null;syncAuto();sfx("click")};
+$("shopb").onclick=()=>{sfx("click");audio();shopMode=st==="pause"?"pause":"menu";if(shopMode==="menu"){const v=getSave();if(v)loadSave(v)}openShop()};
+$("shopq").onclick=()=>{if(st!=="play")return;audio();sfx("click");st="pause";hudShop=true;shopMode="pause";joy=null;aim=null;openShop()};
 $("mus").onclick=()=>{musicOn=!musicOn;$("mus").style.opacity=musicOn?1:.4;audio();sfx("click")};
 $("vibb").onclick=()=>{vibOn=!vibOn;$("vibb").style.opacity=vibOn?1:.4;vib(40);sfx("click")};
 $("vol").oninput=e=>{vol=e.target.value/100;if(MG)MG.gain.value=vol};
@@ -305,7 +316,7 @@ function finishLevel(){
 }
 
 function openShop(){
- st="shop";saveBest(lvl+2);saveGame();saveUnl(lvl+2);const el=$("shop");el.innerHTML="";
+ if(shopMode==="level"){st="shop";saveBest(lvl+2);saveUnl(lvl+2)}saveGame();const el=$("shop");el.innerHTML="";
  const h=document.createElement("h2");h.textContent="المتجر";el.appendChild(h);
  const c=document.createElement("div");c.textContent="🪙 "+coins;c.style.fontSize="22px";c.style.fontWeight="800";el.appendChild(c);
  function row(txt,label,fn,dis){
@@ -317,11 +328,13 @@ function openShop(){
   else row("🔫 "+g.name,"🪙 "+g.cost,()=>{coins-=g.cost;owned[i]=true;cur=i;openShop()},coins<g.cost);
  });
  UPG.forEach(u=>{const n=up[u.k],cost=u.base*(n+1);
-  row(u.name+" (مستوى "+n+"/5)",n>=5?"أقصى":"🪙 "+cost,()=>{coins-=cost;up[u.k]++;openShop()},n>=5||coins<cost);
+  row(u.name+" (مستوى "+n+"/5)",n>=5?"أقصى":"🪙 "+cost,()=>{coins-=cost;up[u.k]++;if(u.k==="hp"){const m=100+up.hp*25;P.hp+=m-P.mh;P.mh=m}openShop()},n>=5||coins<cost);
  });
+ if(autoOwned)row("🎯 تصويب وإطلاق تلقائي",autoOn?"إيقاف":"تشغيل",()=>{autoOn=!autoOn;syncAuto();openShop()});
+ else row("🎯 تصويب وإطلاق تلقائي","🪙 300",()=>{coins-=300;autoOwned=true;autoOn=true;syncAuto();openShop()},coins<300);
  row("علاج كامل ❤️","🪙 50",()=>{coins-=50;P.hp=P.mh;openShop()},coins<50||P.hp>=P.mh);
- const go=document.createElement("button");go.className="big";go.textContent="ابدأ المرحلة "+(lvl+2);
- go.onclick=()=>{sfx("click");lvl++;const hp=P.hp;startLevel();P.hp=Math.min(P.mh,hp)};el.appendChild(go);
+ const go=document.createElement("button");go.className="big";go.textContent=shopMode==="level"?"ابدأ المرحلة "+(lvl+2):"رجوع";
+ go.onclick=()=>{sfx("click");if(shopMode!=="level"){el.style.display="none";if(hudShop){hudShop=false;st="play"}return}lvl++;const hp=P.hp;startLevel();P.hp=Math.min(P.mh,hp)};el.appendChild(go);
  el.style.display="flex";buildGuns();
 }
 
@@ -338,9 +351,9 @@ function update(dt){
  else{const acc=.62*(1+up.spd*.1);P.vx+=ix*acc*f;P.vy+=iy*acc*f;const fr=Math.pow(.86,f);P.vx*=fr;P.vy*=fr}
  P.x=Math.max(P.r,Math.min(W-P.r,P.x+P.vx*f));P.y=Math.max(P.r,Math.min(H-P.r,P.y+P.vy*f));
  // التصويب والإطلاق
- let tgt=null;if(isTouch){const t=tgt=nearest();if(t)P.angle=Math.atan2(t.y-P.y,t.x-P.x);else if(ix||iy)P.angle=Math.atan2(iy,ix)}
- else P.angle=Math.atan2(mouse.y-P.y,mouse.x-P.x);
- if((isTouch?!!tgt:mouse.down)&&P.cd<=0)shoot();
+ let fire=false;if(isTouch){if(autoOwned&&autoOn){const t=nearest();if(t){P.angle=Math.atan2(t.y-P.y,t.x-P.x);fire=true}else if(ix||iy)P.angle=Math.atan2(iy,ix)}else if(aim){const dx=aim.x-aim.ox,dy=aim.y-aim.oy;if(Math.hypot(dx,dy)>10/Z){P.angle=Math.atan2(dy,dx);fire=true}}}
+ else{P.angle=Math.atan2(mouse.y-P.y,mouse.x-P.x);fire=mouse.down}
+ if(fire&&P.cd<=0)shoot();
  // ظهور الكرات
  spawnT-=dt;if(!boss&&spawnT<=0&&kills+enemies.length<goal){spawn();spawnT=L.rate}
  // الرصاص
@@ -456,6 +469,12 @@ function draw(){ctx.setTransform(Z,0,0,Z,0,0);
   const dx=joy.x-joy.ox,dy=joy.y-joy.oy,d=Math.min(Math.hypot(dx,dy),55/Z),a=Math.atan2(dy,dx);
   ctx.fillStyle="#fff7";ctx.beginPath();ctx.arc(joy.ox+Math.cos(a)*d,joy.oy+Math.sin(a)*d,22/Z,0,6.283);ctx.fill();
  }
+ if(aim){
+  ctx.strokeStyle="#ff6fb5aa";ctx.lineWidth=3;ctx.beginPath();ctx.arc(aim.ox,aim.oy,55/Z,0,6.283);ctx.stroke();
+  const dx=aim.x-aim.ox,dy=aim.y-aim.oy,d=Math.min(Math.hypot(dx,dy),55/Z),a=Math.atan2(dy,dx);
+  ctx.fillStyle="#ff6fb5bb";ctx.beginPath();ctx.arc(aim.ox+Math.cos(a)*d,aim.oy+Math.sin(a)*d,22/Z,0,6.283);ctx.fill();
+  if(Math.hypot(dx,dy)>10/Z){ctx.strokeStyle="#ff6fb555";ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(P.x,P.y);ctx.lineTo(P.x+Math.cos(P.angle)*320,P.y+Math.sin(P.angle)*320);ctx.stroke();ctx.setLineDash([])}
+ }
  // تعتيم الأطراف
  const v=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);
  v.addColorStop(0,"#0000");v.addColorStop(1,"#000a");ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
@@ -482,11 +501,12 @@ addEventListener("keydown",e=>{
 addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false});
 cv.addEventListener("pointerdown",e=>{
  mouse.x=e.clientX/Z;mouse.y=e.clientY/Z;
- if(e.pointerType==="touch"){isTouch=true;if(!joy)joy={id:e.pointerId,ox:e.clientX/Z,oy:e.clientY/Z,x:e.clientX/Z,y:e.clientY/Z}}
+ if(e.pointerType==="touch"){isTouch=true;const pt={id:e.pointerId,ox:e.clientX/Z,oy:e.clientY/Z,x:e.clientX/Z,y:e.clientY/Z};
+  if(!(autoOwned&&autoOn)&&e.clientX>=innerWidth/2){if(!aim)aim=pt}else if(!joy)joy=pt}
  else mouse.down=true;
 });
-cv.addEventListener("pointermove",e=>{mouse.x=e.clientX/Z;mouse.y=e.clientY/Z;if(joy&&joy.id===e.pointerId){joy.x=e.clientX/Z;joy.y=e.clientY/Z}});
-addEventListener("pointerup",e=>{mouse.down=false;if(joy&&joy.id===e.pointerId)joy=null});
+cv.addEventListener("pointermove",e=>{mouse.x=e.clientX/Z;mouse.y=e.clientY/Z;if(joy&&joy.id===e.pointerId){joy.x=e.clientX/Z;joy.y=e.clientY/Z}if(aim&&aim.id===e.pointerId){aim.x=e.clientX/Z;aim.y=e.clientY/Z}});
+addEventListener("pointerup",e=>{mouse.down=false;if(joy&&joy.id===e.pointerId)joy=null;if(aim&&aim.id===e.pointerId)aim=null});
 $("dash").addEventListener("pointerdown",e=>{e.stopPropagation();isTouch=true;if(st==="play")dash()});
 
 startLevel();menuInit();showMenu(false);
