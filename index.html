@@ -22,7 +22,8 @@ button{font-family:inherit;cursor:pointer}
 #guns button.on{background:var(--gold);color:#0d1230;font-weight:800}
 #dash{position:fixed;right:16px;bottom:70px;width:70px;height:70px;border-radius:50%;border:3px solid var(--gold);background:#ffc23c33;color:#fff;font-weight:800;font-size:14px;display:none}
 @media(pointer:coarse){#dash{display:block}}
-.ov{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#070a1fe6;text-align:center;padding:16px;overflow:auto}
+.ov{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;background:#070a1fe6;text-align:center;padding:16px;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov>*:first-child{margin-top:auto}.ov>*:last-child{margin-bottom:auto}
 .ov h1,.ov h2{margin:0;font-size:34px}
 .big{padding:12px 30px;font-size:19px;font-weight:800;border:0;border-radius:12px;background:var(--gold);color:#0d1230}
 .it{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);border-radius:14px;padding:8px 14px;width:min(420px,90vw);box-sizing:border-box}
@@ -391,8 +392,8 @@ function die(){
 function finishLevel(){
  sfx("clear");for(const e of enemies)boom(e.x,e.y,e.hue,12);enemies=[];
  if(lvl===LEVELS.length-1){
-  st="win";saveBest(LEVELS.length);clearSave();$("mt").textContent="فزت! 🏆";$("ms").textContent="خلصت كل المراحل";$("mb").textContent="العب من جديد";
-  $("mb").onclick=()=>{lvl=0;coins=0;cur=0;owned=[true,false,false,false];up={dmg:0,spd:0,hp:0};startLevel()};$("msg").style.display="flex";
+  st="win";saveBest(LEVELS.length);saveGame();$("mt").textContent="فزت! 🏆";$("ms").textContent="خلصت كل المراحل، ومشترياتك وتطويراتك محفوظة";$("mb").textContent="العودة للقاعدة";
+  $("mb").onclick=()=>{goBase()};$("msg").style.display="flex";
  }else{saveBest(lvl+2);saveUnl(lvl+2);saveGame();portal=mkPortal(Infinity);banner=2600;bt1="المرحلة "+(lvl+1)+" خلصت! 🎉";bt2="ادخل البوابة للعودة للقاعدة"}
 }
 
@@ -583,7 +584,8 @@ function draw(){ctx.setTransform(Z,0,0,Z,0,0);
 function loop(t){
  const dt=Math.min(50,t-last);last=t;
  if(st==="play"||st==="base")update(dt);else if(st==="menu")moveMenuBalls(dt);
- draw();requestAnimationFrame(loop);
+ const cover=["shop","lvls","msg"].some(id=>$(id).style.display==="flex");
+ if(!cover)draw();requestAnimationFrame(loop);
 }
 
 // ===== التحكم =====
