@@ -68,7 +68,7 @@ button{font-family:inherit;cursor:pointer}
   <div class="row"><button class="big alt sm" id="snd">🔊</button><button class="big alt sm" id="mus">🎵</button><button class="big alt sm" id="vibb">📳</button></div>
   <input type="range" id="vol" min="0" max="100" value="80">
   <button class="big alt" id="quit" style="display:none">إنهاء اللعبة</button>
-  <div id="how"><b>الكمبيوتر:</b> WASD للحركة، الماوس للتصويب والإطلاق، Shift للاندفاع، 1-4 للأسلحة، P للإيقاف.<br><b>الموبايل:</b> اسحب بالنصف الأيسر للحركة وبالنصف الأيمن للتصويب والإطلاق، وزر «اندفاع» للهرب. اشترِ «التصويب التلقائي» من المتجر لتصوّب وتطلق اللعبة عنك.<br>كل مرحلة 5 جولات وآخرها زعيم. اجمع العناصر الساقطة (❤️ علاج، 🛡️ درع، ⚡ إطلاق سريع، ❄️ تجميد). بعد كل جولة تظهر بوابة 🌀 ترجعك للقاعدة، ومن القاعدة تدخل 🚪 لاختيار المرحلة، واشتر أسلحة وتطويرات من المتجر بين المراحل.</div>
+  <div id="how"><b>الكمبيوتر:</b> WASD للحركة، الماوس للتصويب والإطلاق، Shift للاندفاع، 1-4 للأسلحة، P للإيقاف.<br><b>الموبايل:</b> اسحب بالنصف الأيسر للحركة وبالنصف الأيمن للتصويب والإطلاق، وزر «اندفاع» للهرب. اشترِ «التصويب التلقائي» من المتجر لتصوّب وتطلق اللعبة عنك.<br>كل مرحلة 5 جولات وآخرها زعيم. اجمع العناصر الساقطة (❤️ علاج، 🛡️ درع، ⚡ إطلاق سريع، ❄️ تجميد). بعد قتل الزعيم تظهر بوابة 🌀 ترجعك للقاعدة، ومن القاعدة تدخل 🚪 لاختيار المرحلة، واشتر أسلحة وتطويرات من المتجر بين المراحل.</div>
 </div>
 <div class="ov" id="lvls"></div>
 <div class="ov" id="shop"></div>
@@ -96,20 +96,20 @@ const LEVELS=[
 // ===== المسدسات =====
 const GUNS=[
  {name:"مسدس",delay:280,pel:1,spread:.03,dmg:1,speed:9,pierce:0,color:"#ffd166",cost:0,kick:1,shake:0,rec:.6,snd:"pistol",life:90},
- {name:"رشاش",delay:90,pel:1,spread:.16,dmg:.6,speed:11,pierce:0,color:"#06d6a0",cost:150,kick:.6,shake:0,rec:.3,snd:"smg",life:80},
- {name:"شوزن",delay:520,pel:12,spread:.38,dmg:1.5,speed:10,pierce:1,color:"#ef8354",cost:250,kick:6,shake:8,rec:4.5,snd:"shotgun",life:55,big:1},
- {name:"ليزر",delay:450,pel:1,spread:.01,dmg:2.5,speed:17,pierce:4,color:"#4cc9f0",cost:400,kick:3,shake:3,rec:1.5,snd:"laser",life:90},
- {name:"مرتد",delay:260,pel:2,spread:.12,dmg:1.2,speed:9,pierce:0,color:"#c77dff",cost:450,kick:1,shake:0,rec:.6,snd:"pistol",life:200,bounce:3},
- {name:"صاروخ",delay:900,pel:1,spread:.02,dmg:5,speed:6,pierce:0,color:"#ff7a3c",cost:500,kick:0,shake:5,rec:2,snd:"shotgun",life:80,big:1,rocket:1}
+ {name:"رشاش",delay:90,pel:1,spread:.16,dmg:.6,speed:11,pierce:0,color:"#06d6a0",cost:60,kick:.6,shake:0,rec:.3,snd:"smg",life:80},
+ {name:"شوزن",delay:520,pel:12,spread:.38,dmg:1.5,speed:10,pierce:1,color:"#ef8354",cost:100,kick:6,shake:8,rec:4.5,snd:"shotgun",life:55,big:1},
+ {name:"ليزر",delay:450,pel:1,spread:.01,dmg:2.5,speed:17,pierce:4,color:"#4cc9f0",cost:160,kick:3,shake:3,rec:1.5,snd:"laser",life:90},
+ {name:"مرتد",delay:260,pel:2,spread:.12,dmg:1.2,speed:9,pierce:0,color:"#c77dff",cost:180,kick:1,shake:0,rec:.6,snd:"pistol",life:200,bounce:3},
+ {name:"صاروخ",delay:900,pel:1,spread:.02,dmg:5,speed:6,pierce:0,color:"#ff7a3c",cost:220,kick:0,shake:5,rec:2,snd:"shotgun",life:80,big:1,rocket:1}
 ];
-const SKINS=[{n:"ذهبي",h:42,cost:0},{n:"أحمر",h:0,cost:100},{n:"أزرق",h:210,cost:100},{n:"أخضر",h:130,cost:100},{n:"بنفسجي",h:280,cost:150},{n:"وردي",h:330,cost:150}];
+const SKINS=[{n:"ذهبي",h:42,cost:0},{n:"أحمر",h:0,cost:40},{n:"أزرق",h:210,cost:40},{n:"أخضر",h:130,cost:40},{n:"بنفسجي",h:280,cost:60},{n:"وردي",h:330,cost:60}];
 const THEMES={base:{col:"#bde0ff",dir:.6,sway:.2,a:.2,sz:1},stars:{col:"#fff",dir:1,sway:0,a:.2,sz:1},snow:{col:"#eaf6ff",dir:3,sway:.6,a:.4,sz:2},embers:{col:"#ff9a3c",dir:-4,sway:.5,a:.4,sz:1.6},dark:{col:"#b388ff",dir:-1,sway:.3,a:.18,sz:2.4}};
 const THEME_BY_LEVEL=["stars","stars","snow","dark","embers","snow","dark","embers"];
 const UPG=[
- {k:"dmg",name:"قوة الرصاص",base:80},
- {k:"spd",name:"سرعة الحركة",base:60},
- {k:"hp",name:"أقصى صحة",base:70},
- {k:"coin",name:"مضاعف العملات",base:90}
+ {k:"dmg",name:"قوة الرصاص",base:30},
+ {k:"spd",name:"سرعة الحركة",base:25},
+ {k:"hp",name:"أقصى صحة",base:30},
+ {k:"coin",name:"مضاعف العملات",base:40}
 ];
 
 let P,enemies,bullets,parts,texts,ghosts,lvl=0,kills=0,coins=0,cur=0,st="play",spawnT=0,banner=0,shake=0,last=0;
@@ -413,8 +413,8 @@ function openShop(){
  });
  SKINS.forEach((k,i)=>{if(skinsOwned[i])row("🎨 "+k.n,i===skin?"مُجهَّز":"جهّز",()=>{skin=i;openShop()},i===skin);else row("🎨 "+k.n,"🪙 "+k.cost,()=>{coins-=k.cost;skinsOwned[i]=true;skin=i;openShop()},coins<k.cost)});
  if(autoOwned)row("🎯 تصويب وإطلاق تلقائي",autoOn?"إيقاف":"تشغيل",()=>{autoOn=!autoOn;syncAuto();openShop()});
- else row("🎯 تصويب وإطلاق تلقائي","🪙 300",()=>{coins-=300;autoOwned=true;autoOn=true;syncAuto();openShop()},coins<300);
- row("علاج كامل ❤️","🪙 50",()=>{coins-=50;P.hp=P.mh;openShop()},coins<50||P.hp>=P.mh);
+ else row("🎯 تصويب وإطلاق تلقائي","🪙 120",()=>{coins-=120;autoOwned=true;autoOn=true;syncAuto();openShop()},coins<120);
+ row("علاج كامل ❤️","🪙 20",()=>{coins-=20;P.hp=P.mh;openShop()},coins<20||P.hp>=P.mh);
  const go=document.createElement("button");go.className="big";go.textContent=shopMode==="level"?"ابدأ المرحلة "+(lvl+2):"رجوع";
  go.onclick=()=>{sfx("click");if(shopMode!=="level"){el.style.display="none";if(hudShop){hudShop=false;st="play"}closeOv();return}lvl++;const hp=P.hp;startLevel();P.hp=Math.min(P.mh,hp)};el.appendChild(go);
  el.style.display="flex";buildGuns();
@@ -486,7 +486,7 @@ function update(dt){
  parts=parts.filter(p=>p.life>0);
  for(const t of texts){t.y-=.5*f;t.life-=dt}texts=texts.filter(t=>t.life>0);
  for(const g of ghosts)g.life-=dt;ghosts=ghosts.filter(g=>g.life>0);
- if(st==="play"&&!boss&&!portal&&rd<ROUNDS-1&&kills>=goal)roundClear();
+ if(st==="play"&&!boss&&!portal&&rd<ROUNDS-1&&kills>=goal)nextRound();
  $("lv").textContent=inBase?"🏠":(lvl+1)+"-"+(rd+1);$("co").textContent=coins;
  $("hp").style.width=Math.max(0,P.hp/P.mh*100)+"%";$("pg").style.width=(inBase?0:boss?Math.max(0,boss.hp/boss.max*100):Math.min(100,kills/goal*100))+"%";
 }
