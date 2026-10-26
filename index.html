@@ -2,26 +2,26 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
 <title>كرات ومسدسات</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1230">
 <style>
 :root{--gold:#ffc23c;--panel:#1a2150}
-html,body{margin:0;height:100%;overflow:hidden;background:#0d1230;color:#fff;font-family:system-ui,Tahoma,sans-serif;touch-action:none;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#0d1230;color:#fff;font-family:system-ui,Tahoma,sans-serif;touch-action:none;user-select:none;overscroll-behavior:none}
 canvas{display:block}
-#hud{position:fixed;top:8px;left:0;right:0;padding:0 14px;display:flex;justify-content:space-between;font-weight:800;font-size:17px;pointer-events:none}
+#hud{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:0;right:0;padding:0 max(14px,env(safe-area-inset-right,0px)) 0 max(14px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;font-weight:800;font-size:17px;pointer-events:none}
 .bar{width:150px;height:12px;background:#0006;border-radius:8px;overflow:hidden;margin-top:4px;border:1px solid #fff3}
 .bar i{display:block;height:100%}
 #hp{width:100%;background:linear-gradient(90deg,#ff4d6d,#ff8fa3)}
 #pg{width:0;background:linear-gradient(90deg,#4cc9f0,#80ffdb)}
-#guns{position:fixed;bottom:12px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+#guns{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
 button{font-family:inherit;cursor:pointer}
 #guns button{padding:8px 14px;border:2px solid var(--gold);background:var(--panel);color:#fff;border-radius:12px;font-size:15px;font-weight:600}
 #guns button.on{background:var(--gold);color:#0d1230;font-weight:800}
-#dash{position:fixed;right:16px;bottom:70px;width:70px;height:70px;border-radius:50%;border:3px solid var(--gold);background:#ffc23c33;color:#fff;font-weight:800;font-size:14px;display:none}
+#dash{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(70px + env(safe-area-inset-bottom,0px));width:70px;height:70px;border-radius:50%;border:3px solid var(--gold);background:#ffc23c33;color:#fff;font-weight:800;font-size:14px;display:none}
 @media(pointer:coarse){#dash{display:block}}
-.ov{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;background:#070a1fe6;text-align:center;padding:16px;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;background:#070a1fe6;text-align:center;padding:calc(16px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) calc(16px + env(safe-area-inset-left,0px));overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .ov>*:first-child{margin-top:auto}.ov>*:last-child{margin-bottom:auto}
 .ov h1,.ov h2{margin:0;font-size:34px}
 .big{padding:12px 30px;font-size:19px;font-weight:800;border:0;border-radius:12px;background:var(--gold);color:#0d1230}
@@ -35,16 +35,16 @@ button{font-family:inherit;cursor:pointer}
 #best{color:#80ffdb;font-weight:800;min-height:24px}
 .row{display:flex;gap:8px}.sm{padding:8px 14px!important;font-size:18px!important;width:auto!important}
 #vol{width:200px;accent-color:#ffc23c}
-#toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a2150;border:2px solid #ffc23c;border-radius:12px;padding:8px 16px;font-weight:800;display:none;z-index:50;pointer-events:none;text-align:center;max-width:88vw}
-#shopq{position:fixed;top:8px;left:50%;margin-left:5px;width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
-#autob{position:fixed;left:16px;bottom:70px;width:70px;height:70px;border-radius:50%;border:3px solid #80ffdb;background:#80ffdb33;color:#fff;font-size:28px;display:none}
+#toast{position:fixed;top:calc(60px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#1a2150;border:2px solid #ffc23c;border-radius:12px;padding:8px 16px;font-weight:800;display:none;z-index:50;pointer-events:none;text-align:center;max-width:88vw}
+#shopq{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;margin-left:5px;width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
+#autob{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));bottom:calc(70px + env(safe-area-inset-bottom,0px));width:70px;height:70px;border-radius:50%;border:3px solid #80ffdb;background:#80ffdb33;color:#fff;font-size:28px;display:none}
 @media(pointer:coarse){#autob.show{display:block}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;width:min(430px,92vw)}
 .lv{background:var(--panel);border:2px solid var(--gold);border-radius:14px;padding:10px 4px;color:#fff;font-weight:800;font-size:24px}
 .lv small{display:block;font-size:12px;font-weight:600;margin-top:2px}
 .lv:disabled{opacity:.45;border-color:#556!important}
 #how{display:none;max-width:380px;font-size:15px;line-height:1.8;background:#1a2150;border-radius:14px;padding:10px 14px}
-#pause{position:fixed;top:8px;left:50%;margin-left:-26px;transform:translateX(-50%);width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
+#pause{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;margin-left:-26px;transform:translateX(-50%);width:42px;height:42px;border-radius:50%;border:2px solid #fff5;background:#0006;color:#fff;font-size:18px}
 </style>
 </head>
 <body>
@@ -64,6 +64,7 @@ button{font-family:inherit;cursor:pointer}
   <h1 class="logo">كرات<br>ومسدسات</h1>
   <div id="best"></div>
   <button class="big" id="cont" style="display:none">كمّل اللعب</button>
+  <button class="big" id="resume" style="display:none">كمّل الجولة</button>
   <button class="big" id="play">ابدأ اللعب</button>
   <button class="big alt" id="shopb">🛒 المتجر</button>
   <button class="big alt" id="achb">🏆 الإنجازات</button>
@@ -176,7 +177,7 @@ function saveBest(n){try{if(n>Number(localStorage.getItem("balls_best")||0))loca
 function getBest(){try{return Number(localStorage.getItem("balls_best")||0)}catch(e){return 0}}
 function showMenu(paused){
  st=paused?"pause":"menu";
- $("play").textContent=paused?"كمل":"ابدأ اللعب";$("cont").style.display="none";
+ $("play").textContent=paused?"كمل":"ابدأ اللعب";$("cont").style.display="none";$("resume").style.display=(!paused&&getRun())?"block":"none";
  $("quit").style.display=paused?"block":"none";
  const b=getBest();$("best").textContent=b?"أعلى مرحلة وصلت لها: "+b:"";
  $("menu").style.display="flex";
@@ -200,12 +201,12 @@ function openLevels(){
  el.appendChild(g);
  const bk=document.createElement("button");bk.className="big alt";bk.textContent="رجوع";bk.onclick=()=>{sfx("click");el.style.display="none";closeOv()};el.appendChild(bk);
  const rs=document.createElement("button");rs.className="big alt";rs.textContent="🗑 تصفير التقدم";
- rs.onclick=()=>{if(confirm("تصفير كل المراحل والعملات والأسلحة؟")){try{localStorage.removeItem("balls_unl")}catch(e){}clearSave();fullReset();openLevels()}};el.appendChild(rs);
+ rs.onclick=()=>{if(confirm("تصفير كل المراحل والعملات والأسلحة؟")){try{localStorage.removeItem("balls_unl")}catch(e){}clearSave();clearRun();fullReset();openLevels()}};el.appendChild(rs);
  el.style.display="flex";
 }
 function fullReset(){skinsOwned=[true];skin=0;autoOwned=false;autoOn=true;syncAuto();lvl=0;coins=0;cur=0;owned=[true,false,false,false];up={dmg:0,spd:0,hp:0}}
 $("play").onclick=()=>{audio();fs();sfx("click");if(st==="pause"){st=inBase?"base":"play";$("menu").style.display="none"}else enterBase()};
-$("quit").onclick=()=>{sfx("click");fullReset();startLevel();showMenu(false)};
+$("quit").onclick=()=>{sfx("click");saveRun();const b=bootDone;bootDone=false;startLevel();bootDone=b;showMenu(false)};
 $("howb").onclick=()=>{sfx("click");const h=$("how");h.style.display=h.style.display==="block"?"none":"block"};
 $("snd").onclick=()=>{muted=!muted;audio();$("snd").textContent=muted?"🔇":"🔊";sfx("click")};
 $("pause").onclick=()=>{audio();togglePause()};
@@ -220,7 +221,7 @@ $("vibb").onclick=()=>{vibOn=!vibOn;$("vibb").style.opacity=vibOn?1:.4;vib(40);s
 $("vol").oninput=e=>{vol=e.target.value/100;if(MG)MG.gain.value=vol};
 $("cont").onclick=()=>{audio();fs();sfx("click");const v=getSave();if(!v)return;lvl=v.lvl;coins=v.coins;owned=v.owned;up=v.up;cur=v.cur;startLevel()};
 
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&st==="play")showMenu(true)});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&st==="play"){saveRun();showMenu(true)}});
 
 function newPlayer(){const mh=100+up.hp*25;return{x:W/2,y:H/2,r:16,hp:mh,mh,vx:0,vy:0,ix:0,ix2:0,iy:0,cd:0,inv:0,shield:0,rapid:0,flash:0,dash:0,dcd:0,dx:0,dy:0,angle:0}}
 let eb=[],drops=[],boss=null,rd=0,goal=1,bt1="",bt2="";
@@ -229,6 +230,7 @@ function startRound(){
  const L=LEVELS[lvl];
  if(rd===ROUNDS-1){goal=1;boss=makeBoss(L.boss);bt1="⚠ زعيم المرحلة "+(lvl+1);bt2=L.boss.name}
  else{boss=null;goal=L.n+rd*2;bt1="المرحلة "+(lvl+1)+" - الجولة "+(rd+1)+"/"+ROUNDS;bt2="اقضِ على "+goal+" كرة"}
+ saveRun();
 }
 function nextRound(){
  sfx("clear");for(const e of enemies)boom(e.x,e.y,e.hue,12);
@@ -291,7 +293,7 @@ function baseTick(dt){
 function closeOv(){if(resumeSt){st=resumeSt;resumeSt=null;if(st==="base"){BASE.cd=900;P.x=W/2;P.y=H*.82}}}
 function enterBase(){const v=getSave();if(v)loadSave(v);else fullReset();goBase();checkDaily();showTut()}
 function goBase(){
- saveGame();const hp=P?P.hp:0;P=newPlayer();P.x=W/2;P.y=H*.82;if(hp)P.hp=Math.min(P.mh,hp);
+ clearRun();saveGame();const hp=P?P.hp:0;P=newPlayer();P.x=W/2;P.y=H*.82;if(hp)P.hp=Math.min(P.mh,hp);
  portal=null;inBase=true;enemies=[];bullets=[];eb=[];mines=[];drops=[];boss=null;goal=0;banner=0;resumeSt=null;BASE.cd=900;st="base";
  for(const id of["menu","lvls","shop","msg"])$(id).style.display="none";
  buildGuns();sfx("clear");
@@ -489,6 +491,27 @@ function drawHero(){
  if(P.flash>0){ctx.shadowColor="#fff";ctx.shadowBlur=20;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(gx+gl+8,0,g.big?14:7,0,6.283);ctx.fill();ctx.shadowBlur=0}
  ctx.restore();
 }
+let bootDone=false,backTimer=null;
+function getRun(){try{return JSON.parse(localStorage.getItem("balls_run")||"null")}catch(e){return null}}
+function saveRun(){if(!bootDone||inBase||!P)return;saveGame();try{localStorage.setItem("balls_run",JSON.stringify({lvl,rd,hp:P.hp}))}catch(e){}}
+function clearRun(){try{localStorage.removeItem("balls_run")}catch(e){}}
+$("resume").onclick=()=>{audio();fs();sfx("click");const run=getRun(),sv=getSave();if(!run)return;if(sv)loadSave(sv);lvl=run.lvl;startLevel();rd=run.rd;startRound();P.hp=Math.min(P.mh,run.hp||P.mh)};
+addEventListener("pagehide",()=>{if(st==="play")saveRun()});
+// زر الرجوع بالأندرويد: يغلق القوائم أو يوقف اللعبة، ويخرج بالضغط مرتين من القائمة الرئيسية
+function pushGuard(){try{history.pushState({g:1},"")}catch(e){}}
+function onBack(){
+ const open=id=>$(id).style.display==="flex";
+ if(open("tut")){$("tut").style.display="none";try{localStorage.setItem("balls_tut","1")}catch(e){}if(st==="pause"&&inBase)st="base";return true}
+ if(open("ach")){$("ach").style.display="none";return true}
+ if(open("shop")){if(shopMode!=="level"){$("shop").style.display="none";if(hudShop){hudShop=false;st="play"}closeOv()}return true}
+ if(open("lvls")){$("lvls").style.display="none";closeOv();return true}
+ if(open("msg"))return true;
+ if(st==="play"||st==="base"||(st==="pause"&&open("menu"))){togglePause();return true}
+ if(st==="pause")return true;
+ showToast("اضغط رجوع مرة ثانية للخروج");clearTimeout(backTimer);backTimer=setTimeout(pushGuard,2500);return false;
+}
+pushGuard();
+addEventListener("popstate",()=>{if(onBack())pushGuard()});
 function startLevel(){
  P=newPlayer();enemies=[];bullets=[];parts=[];texts=[];ghosts=[];drops=[];portal=null;mines=[];freezeT=0;inBase=false;resumeSt=null;rd=0;st="play";startRound();
  $("shop").style.display="none";$("msg").style.display="none";$("menu").style.display="none";$("lvls").style.display="none";buildGuns();
@@ -534,9 +557,9 @@ function die(){
 function finishLevel(){
  sfx("clear");for(const e of enemies)boom(e.x,e.y,e.hue,12);enemies=[];
  if(lvl===LEVELS.length-1){
-  st="win";saveBest(LEVELS.length);saveGame();$("mt").textContent="فزت! 🏆";$("ms").textContent="خلصت كل المراحل، ومشترياتك وتطويراتك محفوظة";$("mb").textContent="العودة للقاعدة";
+  st="win";saveBest(LEVELS.length);clearRun();saveGame();$("mt").textContent="فزت! 🏆";$("ms").textContent="خلصت كل المراحل، ومشترياتك وتطويراتك محفوظة";$("mb").textContent="العودة للقاعدة";
   $("mb").onclick=()=>{goBase()};$("msg").style.display="flex";
- }else{saveBest(lvl+2);saveUnl(lvl+2);saveGame();portal=mkPortal(Infinity);banner=2600;bt1="المرحلة "+(lvl+1)+" خلصت! 🎉";bt2="ادخل البوابة للعودة للقاعدة"}
+ }else{saveBest(lvl+2);saveUnl(lvl+2);clearRun();saveGame();portal=mkPortal(Infinity);banner=2600;bt1="المرحلة "+(lvl+1)+" خلصت! 🎉";bt2="ادخل البوابة للعودة للقاعدة"}
 }
 
 function openShop(){
@@ -744,7 +767,7 @@ cv.addEventListener("pointermove",e=>{mouse.x=e.clientX/Z;mouse.y=e.clientY/Z;if
 addEventListener("pointerup",e=>{mouse.down=false;if(joy&&joy.id===e.pointerId)joy=null;if(aim&&aim.id===e.pointerId)aim=null});
 $("dash").addEventListener("pointerdown",e=>{e.stopPropagation();isTouch=true;if(st==="play")dash()});
 
-startLevel();menuInit();showMenu(false);setLow(lowFx);
+startLevel();menuInit();showMenu(false);setLow(lowFx);bootDone=true;
 requestAnimationFrame(loop);
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
