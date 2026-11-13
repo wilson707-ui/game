@@ -64,6 +64,33 @@ button{font-family:inherit;cursor:pointer}
 .lv small{display:block;font-size:12px;font-weight:600;margin-top:2px}
 .lv:disabled{opacity:.45;border-color:#556!important}
 #how{display:none;max-width:380px;font-size:15px;line-height:1.8;background:#1a2150;border-radius:14px;padding:10px 14px}
+#rot{position:fixed;inset:0;z-index:100;background:#070a1f;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:22px;font-weight:800;text-align:center;padding:20px}
+@media(orientation:portrait) and (pointer:coarse){#rot{display:flex}}
+@media(orientation:landscape){.it,.grid,.tabs{width:min(640px,92vw)}}
+@media(orientation:landscape) and (max-height:540px){
+ #hud{top:calc(6px + env(safe-area-inset-top,0px));font-size:15px}
+ .bar{width:120px;height:10px}
+ #tbar{top:calc(6px + env(safe-area-inset-top,0px));gap:8px}
+ #tbar button{width:38px;height:38px;font-size:16px}
+ #combo{top:calc(52px + env(safe-area-inset-top,0px));font-size:16px}
+ #toast{top:calc(92px + env(safe-area-inset-top,0px))}
+ .stk{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+ #ctrl button{width:56px;height:56px}
+ #dash{right:calc(36px + var(--ss,112px) + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+ #skill{right:calc(36px + var(--ss,112px) + env(safe-area-inset-right,0px));bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+ #autob{left:calc(36px + var(--ss,112px) + env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+ #qbtn{left:calc(36px + var(--ss,112px) + env(safe-area-inset-left,0px));bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+ .lefty #dash,.lefty #skill{right:auto;left:calc(36px + var(--ss,112px) + env(safe-area-inset-left,0px))}
+ .lefty #autob,.lefty #qbtn{left:auto;right:calc(36px + var(--ss,112px) + env(safe-area-inset-right,0px))}
+ .ov{gap:6px}.ov h1,.ov h2{font-size:24px}
+ #menu{flex-direction:row;flex-wrap:wrap;justify-content:center;align-content:center;gap:8px 12px}
+ #menu>*{margin:0!important}
+ #menu .logo{flex-basis:100%;font-size:32px;line-height:1.05}
+ #menu .logo br{display:none}
+ #menu .big{width:190px;padding:8px 14px;font-size:16px}
+ #menu #best,#menu #how{flex-basis:100%}
+ #menu .row{flex-basis:auto}
+}
 </style>
 </head>
 <body>
@@ -85,7 +112,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div class="ov" id="menu">
-  <h1 class="logo">كرات<br>ومسدسات</h1>
+  <h1 class="logo">كرات <br>ومسدسات</h1>
   <div id="best"></div>
   <button class="big" id="cont" style="display:none">كمّل اللعب</button>
   <button class="big" id="resume" style="display:none">كمّل الجولة</button>
@@ -113,6 +140,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="ov" id="res"></div>
 <div class="ov" id="msg"><h1 id="mt"></h1><div id="ms"></div><button class="big" id="mb"></button></div>
 
+<div id="rot"><div style="font-size:64px">📱↻</div><div>دوّر جوالك للوضع الأفقي</div><div style="font-size:14px;font-weight:600;opacity:.7">اللعبة تشتغل بالأفقي فقط</div></div>
 <script>
 const cv=document.getElementById("c"),ctx=cv.getContext("2d"),$=id=>document.getElementById(id);
 let lowFx=false;try{lowFx=localStorage.getItem("balls_low")==="1"}catch(e){}
@@ -273,7 +301,8 @@ $("howb").onclick=()=>{sfx("click");const h=$("how");h.style.display=h.style.dis
 $("snd").onclick=()=>{muted=!muted;audio();$("snd").textContent=muted?"🔇":"🔊";sfx("click")};
 $("pause").onclick=()=>{audio();togglePause()};
 function vib(n){if(vibOn&&navigator.vibrate)try{navigator.vibrate(n)}catch(e){}}
-function fs(){if(matchMedia("(pointer:coarse)").matches&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{})}
+function lockLand(){try{const o=screen.orientation;if(o&&o.lock)o.lock("landscape").catch(()=>{})}catch(e){}}
+function fs(){lockLand();if(matchMedia("(pointer:coarse)").matches&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().then(lockLand).catch(()=>{})}
 function syncAuto(){$("stkR").style.display=(autoOwned&&autoOn)?"none":"";const b=$("autob");b.classList.toggle("show",autoOwned);b.style.opacity=autoOn?1:.5}
 function loadSave(v){coins=v.coins;owned=v.owned;up=v.up;cur=v.cur;autoOwned=!!v.auto;autoOn=v.autoOn!==false;skinsOwned=v.sk||[true];skin=v.skin||0;gunLv=v.gl||[];charId=v.ch||0;charsOwned=v.co||[true];gearOwned=v.go||{};eq=v.eq||{c:[null,null],a:null};cons=Object.assign({heal:0,bomb:0,freeze:0},v.cs||{});quickSel=v.qs||"heal";att=v.at||[];attOwned=v.ao||{};syncAuto();applyChar()}
 $("autob").onclick=()=>{autoOn=!autoOn;joy=null;aim=null;syncAuto();sfx("click")};
@@ -345,12 +374,12 @@ function bossUpdate(dt,f){
 let inBase=false,portal=null,resumeSt=null,freezeT=0,mines=[],blasts=[],corpses=[];
 const BASE={cd:0};
 function bgHue(){return inBase?205:LEVELS[lvl].hue}
-function zones(){return[
- {x:W*.5,y:H*.17,r:48,icon:"🚪",label:"اختيار المرحلة",col:"#ffc23c",go:()=>{resumeSt="base";st="pause";openLevels()}},
- {x:W*.22,y:H*.34,r:40,icon:"📜",label:"المهام",col:"#ffd166",badge:()=>qReady(),go:()=>{resumeSt="base";st="pause";openQuests()}},
- {x:W*.78,y:H*.34,r:40,icon:"📖",label:"دليل الأعداء",col:"#b388ff",go:()=>{resumeSt="base";st="pause";openDex()}},
- {x:W*.22,y:H*.52,r:40,icon:"🛒",label:"المتجر",col:"#80ffdb",go:()=>{resumeSt="base";st="pause";shopMode="base";openShop()}},
- {x:W*.78,y:H*.52,r:40,icon:"🧑",label:"الشخصيات",col:"#ff6fb5",go:()=>{resumeSt="base";st="pause";openChars()}}
+function zones(){const L=W>H*1.2;return[
+ {x:W*.5,y:H*(L?.3:.17),r:48,icon:"🚪",label:"اختيار المرحلة",col:"#ffc23c",go:()=>{resumeSt="base";st="pause";openLevels()}},
+ {x:W*(L?.2:.22),y:H*(L?.42:.34),r:40,icon:"📜",label:"المهام",col:"#ffd166",badge:()=>qReady(),go:()=>{resumeSt="base";st="pause";openQuests()}},
+ {x:W*(L?.8:.78),y:H*(L?.42:.34),r:40,icon:"📖",label:"دليل الأعداء",col:"#b388ff",go:()=>{resumeSt="base";st="pause";openDex()}},
+ {x:W*(L?.32:.22),y:H*(L?.6:.52),r:40,icon:"🛒",label:"المتجر",col:"#80ffdb",go:()=>{resumeSt="base";st="pause";shopMode="base";openShop()}},
+ {x:W*(L?.68:.78),y:H*(L?.6:.52),r:40,icon:"🧑",label:"الشخصيات",col:"#ff6fb5",go:()=>{resumeSt="base";st="pause";openChars()}}
 ]}
 function baseTick(dt){
  P.hp=Math.min(P.mh,P.hp+dt*.02);
@@ -850,6 +879,7 @@ function drawSolids(){
  if(tele)for(const t of tele)gate(t.x,t.y,t.r,"#4cc9f0","🔁","");
  if(windOn>0){ctx.strokeStyle="#e9c27a66";ctx.lineWidth=2;const tm=performance.now()*.7;for(let i=0;i<30;i++){const bx=(((i*131+tm*Math.cos(windA))%W)+W)%W,by=(((i*173+tm*Math.sin(windA))%H)+H)%H;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Math.cos(windA)*46,by+Math.sin(windA)*46);ctx.stroke()}}
 }
+addEventListener("resize",()=>{try{if(matchMedia("(orientation:portrait) and (pointer:coarse)").matches&&st==="play")showMenu(true)}catch(e){}});
 function startLevel(){
  P=newPlayer();enemies=[];bullets=[];parts=[];texts=[];ghosts=[];drops=[];portal=null;mines=[];freezeT=0;inBase=false;resumeSt=null;combo=0;comboT=0;dmgs=[];waves=[];skillCharge=Math.max(skillCharge,30);rd=0;st="play";startRound();lvs={t:0,k:0,c:0,mc:0,hits:0};maybeStory();
  $("shop").style.display="none";$("msg").style.display="none";$("menu").style.display="none";$("lvls").style.display="none";for(const id of["quests","dex","set","res","story","chars","bag","ach","tut"])$(id).style.display="none";buildGuns();
@@ -1053,7 +1083,7 @@ function draw(){ctx.setTransform(Z*DPR,0,0,Z*DPR,0,0);
  if(!P)return;
  ctx.save();
  if(shake>.5)ctx.translate(rnd(-shake,shake),rnd(-shake,shake));
- if(inBase){for(const z of zones()){gate(z.x,z.y,z.r,z.col,z.icon,z.label);if(z.badge&&z.badge()){ctx.fillStyle="#ff3b3b";ctx.beginPath();ctx.arc(z.x+z.r*.8,z.y-z.r*.8,8,0,6.283);ctx.fill()}}ctx.font="800 "+15/Z+"px sans-serif";ctx.fillStyle="#fff9";ctx.textAlign="center";ctx.fillText("ادخل البوابة لاختيار المرحلة",W/2,H*.17+48+52/Z);ctx.fillStyle="#ffe9a8cc";ctx.fillText("🧑‍🏫 "+TIPS[Math.floor(performance.now()/7000)%TIPS.length],W/2,H*.585)}
+ if(inBase){for(const z of zones()){gate(z.x,z.y,z.r,z.col,z.icon,z.label);if(z.badge&&z.badge()){ctx.fillStyle="#ff3b3b";ctx.beginPath();ctx.arc(z.x+z.r*.8,z.y-z.r*.8,8,0,6.283);ctx.fill()}}ctx.font="800 "+15/Z+"px sans-serif";ctx.fillStyle="#fff9";ctx.textAlign="center";ctx.fillText("ادخل البوابة لاختيار المرحلة",W/2,zones()[0].y+48+52/Z);ctx.fillStyle="#ffe9a8cc";ctx.fillText("🧑‍🏫 "+TIPS[Math.floor(performance.now()/7000)%TIPS.length],W/2,W>H*1.2?H*.93:H*.585)}
  drawSolids();
  for(const l of lava){const k=1+Math.sin(performance.now()/300+l.x)*.06;ctx.fillStyle="#ff5a1f55";ctx.strokeStyle="#ff8c3a";ctx.lineWidth=3;ctx.shadowColor="#ff5a1f";ctx.shadowBlur=22;ctx.beginPath();ctx.ellipse(l.x,l.y,l.r*k,l.r*.7*k,0,0,6.283);ctx.fill();ctx.stroke();ctx.shadowBlur=0}
  if(portal){gate(portal.x,portal.y,40,"#c77dff","🌀","القاعدة");if(isFinite(portal.left)){ctx.font="800 "+15/Z+"px sans-serif";ctx.fillStyle="#fff";ctx.fillText("الجولة التالية بعد "+Math.ceil(Math.max(0,portal.left)/1000),portal.x,portal.y-56/Z)}}
@@ -1143,7 +1173,7 @@ cv.addEventListener("pointermove",e=>{mouse.x=e.clientX/Z;mouse.y=e.clientY/Z;if
 addEventListener("pointerup",e=>{mouse.down=false;if(joy&&joy.id===e.pointerId)joy=null;if(aim&&aim.id===e.pointerId)aim=null});
 $("dash").addEventListener("pointerdown",e=>{e.stopPropagation();isTouch=true;if(st==="play")dash()});
 
-startLevel();menuInit();showMenu(false);setLow(lowFx);syncAuto();applyChar();applySet();bootDone=true;
+startLevel();menuInit();showMenu(false);setLow(lowFx);syncAuto();applyChar();applySet();lockLand();bootDone=true;
 requestAnimationFrame(loop);
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
